@@ -1,4 +1,6 @@
-#Exercice 1
+############################## Exo 1 ############################## 
+
+print("\n\n"+"-"*40+" Exo 1 "+"-"*40)
 
 M = [
     [4, 4, 8, 2],
@@ -34,6 +36,43 @@ Ms = varEcart(M)
 print("\nMs :")
 afficher(Ms)
 
+def baase(Ts):
+    B = []
+    for i in range(len(Ts)-1):
+        if Ts[i][0] == 0:
+            isValid = True
+            one = -1
+
+            j = 1
+            while isValid:
+                if Ts[i][j] == 1 and one != -1:
+                    isValid = False
+                elif Ts[i][j] == 1 and one == -1:
+                    one = j
+                elif Ts[i][j] != 0:
+                    isValid = False
+                j += 1
+            
+            if isValid:
+                B.append(one)
+            else:
+                B.append(-1)
+            
+        elif Ts[0][i] == 1:
+            isOnlyOne = True
+            j = 1
+            while j < len(Ts) and isOnlyOne:
+                if Ts[j][i] != 0:
+                    isOnlyOne = False
+                j += 1
+            if isOnlyOne:
+                B.append(i)
+            else:
+                B.append(-1)
+        else:
+            B.append(-1)  
+    return B
+
 def base(Ts):
     B = []
     for i in range(0, len(Ts[0])-1):
@@ -58,10 +97,12 @@ b = base(Ms)
 print("\nb : ")
 print(b)
 
-#Exercice 2
+############################## Exo 2 ############################## 
+
+print("\n\n"+"-"*40+" Exo 2 "+"-"*40)
 
 def solBase(Ts):
-    B = base(Ms)
+    B = base(Ts)
     S = []
     for i in range(len(B)):
         if B[i] == -1:
@@ -95,11 +136,6 @@ Test = [
     [1, 0, 4, 0, -1]
 ]
 
-print(base(Test))
-print(solBase(Test))
-print(solBaseObj(Test))
-
-
 def echanger(i, j, B):
     newB = B.copy()
 
@@ -128,7 +164,11 @@ assert base(Test) == [-1, -1, 0, 1]
 assert echanger(1, 0, base(Test)) == [1, -1, 0, -1]
 
 print("\n\n")
-#Exercice 3
+
+
+############################## Exo 3 ############################## 
+
+print("\n\n"+"-"*40+" Exo 3 "+"-"*40)
 
 
 def echelRed(M, i, j):
@@ -149,7 +189,10 @@ afficher(Test)
 
 
 print("\n\n")
-#Exercice 4
+
+############################## Exo 4 ############################## 
+
+print("\n\n"+"-"*40+" Exo 4 "+"-"*40)
 
 
 def jPivot(M):
@@ -204,26 +247,32 @@ Test = [
 assert (iPivot(Test),jPivot(Test)) == (-1, 2)
 
 
-#Exercice 5
+############################## Exo 5 ############################## 
+
+print("\n\n"+"-"*40+" Exo 5 "+"-"*40)
 
 def simplex(M):
     Ms = varEcart(M)
-    i = 0
-    j = 0
+    i = iPivot(Ms)
+    j = jPivot(Ms)
     print("Matrice de Base :")
     afficher(Ms)
     while i >= 0 and j >= 0:
+        echelRed(Ms, i, j)
         i = iPivot(Ms)
         j = jPivot(Ms)
-        if i >= 0 and j >= 0:
-            echelRed(Ms, i, j)
-            print("\nPivot en ("+str(i+1)+","+str(j+1)+") :")
-            afficher(Ms)
+        print("\nPivot en ("+str(i+1)+","+str(j+1)+") :")
+        afficher(Ms)
     
-    print("\nSolution :")
-    sol = solBase(Ms)
-    print(solBaseObj(Ms))
-    return sol
+    if j == -1:
+        print("\nSolution :")
+        sol = solBase(Ms)
+        print(solBaseObj(Ms))
+        return sol
+    print("Pas de solution")
+    return None
 
 print(simplex(M))
+
+print("HEY")
     
