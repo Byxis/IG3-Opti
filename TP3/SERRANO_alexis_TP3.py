@@ -92,7 +92,10 @@ def Ex1():
     plt.ylabel('Valeur')
     plt.title('Valeurs de f et f\' associées')
     plt.legend()
+    plt.savefig("ex1.svg")
     plt.show()
+
+    print(dichotomie(fonctionDeriv, -2, 3, 1E-3))
 
 # 2 - Méthode du gradient
 
@@ -162,7 +165,37 @@ def Ex3():
             traceEx3(fonc2, gradFonc2, gradient_rebr, x0=[3,3], a=0.1, b=0.7, e=1E-3, linespacex=[-3, 6], linspacey=[-6, 6])
         else:
             break
-    
+
+    while True:
+        choix_fonc = input("\nNumero de la fonction (1, 2 ou sortie) avec alpha et beta ayant varié : ")
+        if choix_fonc == '1':
+            traceEx3(fonc1, gradFonc1, gradient_rebr, x0=[3,3], a=0.1, b=0.7, e=1E-3, linespacex=[-3, 3], linspacey=[-3, 3])
+        elif choix_fonc == '2':
+            traceEx3(fonc2, gradFonc2, gradient_rebr, x0=[3,3], a=0.1, b=0.7, e=1E-3, linespacex=[-3, 6], linspacey=[-6, 6])
+        else:
+            break
+
+def gradient_rebr(f, gradF, x0, a, b, e):
+        points = []
+        x = x0
+        points.append(x)
+        gf = gradF(x[0], x[1])
+        while m.sqrt(gf[0]**2 + gf[1]**2) > e:
+            n = 1
+            nfg2 = m.sqrt(gf[0]**2 + gf[1]**2)**2
+            while f(x[0]-n*gf[0], x[1]-n*gf[1]) > f(x[0], x[1]) - a*n*nfg2:
+                n = n*b
+            x[0] = x[0] - n*gf[0]
+            x[1] = x[1] - n*gf[1]
+            points.append([x[0], x[1]])
+            gf = gradF(x[0], x[1])
+        return points
+
+#fonc1 = lambda x1,x2: (x1**2) + 2*(x2**2) + x1*x2 + x1 - x2 + 30
+#gradFonc1 = lambda x1,x2: (2*x1 + x2 + 1, 4*x2 + x1 - 1)
+#traceEx3(fonc1, gradFonc1, gradient_rebr, x0=[3,3], a=0.1, b=0.7, e=1E-3, linespacex=[-3, 3], linspacey=[-3, 3])
+#traceEx3(fonc1, gradFonc1, gradient_rebr, x0=[3,3], a=0.2, b=0.1, e=1E-3, linespacex=[-3, 3], linspacey=[-3, 3])
+
 while True:
     choix = input("\nNumero de l'exercice (1, 2, 3 ou sortie) : ")
     if choix == '1':
@@ -173,3 +206,5 @@ while True:
         Ex3()
     else:
         break
+
+#lien overleaf : https://www.overleaf.com/project/6761553b0618187e0a7c195b
