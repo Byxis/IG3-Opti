@@ -6,15 +6,18 @@ from mpl_toolkits.mplot3d import Axes3D
 # Annexe - Fonctions outils
 
 def traceEx2(f, gradF, methode_gradient, x0, p=0.01, e=1E-5, linespacex=[-1, 3], linspacey=[-1, 3]):
+        nbFonction = 2
+        
         fig = plt.figure(figsize=(18, 12))
-        axe = fig.add_subplot(111)
+
+        ax1 = fig.add_subplot(121)
 
         x = np.linspace(linespacex[0], linespacex[1], 400)
         y = np.linspace(linspacey[0], linspacey[1], 400)
         x, y = np.meshgrid(x, y)
 
-        axe.contour(x, y, f(x, y), 50, cmap='plasma')
-        axe.title.set_text('Courbes de niveau de la fonction')
+        ax1.contour(x, y, f(x, y), 50, cmap='plasma')
+        ax1.title.set_text(f'Ligne de niveau de la fonction {nbFonction} avec ϵ = {e} ')
 
 
         listPoints = methode_gradient(gradF, x0, p, e)
@@ -23,16 +26,21 @@ def traceEx2(f, gradF, methode_gradient, x0, p=0.01, e=1E-5, linespacex=[-1, 3],
             print(i,j, f(i,j), gradF(i,j))
 
         points = np.array(listPoints)
-        axe.plot(points[:, 0], points[:, 1], 'ro')
+        ax1.plot(points[:, 0], points[:, 1], 'ro')
 
         for i, point in enumerate(points):
             if i < 10:
-                axe.text(point[0], point[1], str(i), fontsize=12, color='red')
+                ax1.text(point[0], point[1], str(i), fontsize=12, color='red')
             elif  i < 100 and i %10 == 0:
-                axe.text(point[0], point[1], str(i), fontsize=12, color='red') 
+                ax1.text(point[0], point[1], str(i), fontsize=12, color='red') 
+
+        ax2 = fig.add_subplot(122, projection='3d')
+        ax2.plot_surface(x, y, f(x, y), cmap='viridis')
+        ax2.title.set_text(f'Graphe de la fonction {nbFonction}')
 
         plt.legend()
         plt.tight_layout()
+        plt.savefig(f"ex2-{nbFonction}bis.svg")
         plt.show()
 
 def afficherPoints(points, f, gradF):
@@ -40,15 +48,17 @@ def afficherPoints(points, f, gradF):
         print(f"Point: ({i:.4f}, {j:.4f}), f(i, j): {f(i, j):.4f}, gradF(i, j): ({gradF(i, j)[0]:.4f}, {gradF(i, j)[1]:.4f})")
 
 def traceEx3(f, gradF, methode_gradient, x0, a=0.5, b=0.7, e=1E-5, linespacex=[-1, 3], linspacey=[-1, 3]):
+        nbFonction = 2
+
         fig = plt.figure(figsize=(18, 12))
-        axe = fig.add_subplot(111)
+        ax1 = fig.add_subplot(121)
 
         x = np.linspace(linespacex[0], linespacex[1], 400)
         y = np.linspace(linspacey[0], linspacey[1], 400)
         x, y = np.meshgrid(x, y)
 
-        axe.contour(x, y, f(x, y), 50, cmap='plasma')
-        axe.title.set_text('Courbes de niveau de la fonction')
+        ax1.contour(x, y, f(x, y), 50, cmap='plasma')
+        ax1.title.set_text(f'Courbes de niveau de la fonction {nbFonction} avec α = {a} et β = {b} ')
 
 
         listPoints = methode_gradient(f, gradF, x0, a, b, e)
@@ -57,45 +67,48 @@ def traceEx3(f, gradF, methode_gradient, x0, a=0.5, b=0.7, e=1E-5, linespacex=[-
             print(i,j, f(i,j), gradF(i,j))
 
         points = np.array(listPoints)
-        axe.plot(points[:, 0], points[:, 1], 'ro')
+        ax1.plot(points[:, 0], points[:, 1], 'ro')
         for i, point in enumerate(points):
             if i < 10:
-                axe.text(point[0], point[1], str(i), fontsize=12, color='red')
+                ax1.text(point[0], point[1], str(i), fontsize=12, color='red')
             elif  i < 100 and i %10 == 0:
-                axe.text(point[0], point[1], str(i), fontsize=12, color='red') 
+                ax1.text(point[0], point[1], str(i), fontsize=12, color='red') 
+
+        ax2 = fig.add_subplot(122, projection='3d')
+        ax2.plot_surface(x, y, f(x, y), cmap='viridis')
+        ax2.title.set_text(f'Graphe de la fonction {nbFonction}')
 
         plt.legend()
         plt.tight_layout()
+        plt.savefig(f"ex3-{nbFonction}bis.svg")
         plt.show()
 
 
 # 1 - Méthode par dichotomie
 
 def Ex1():
-    def dichotomie(f, a:float, b:float, eps:float):
+    def dichotomie(f, fp, a:float, b:float, eps:float):
         points = []
         while b - a > eps:
             m = (a+b)/2
-            points.append((m, fonction(m), f(m)))
-            if f(m) >= 0:
+            points.append((m, f(m), fp(m)))
+            if fp(m) >= 0:
                 b = m
             else:
                 a = m
-        points.append((m, fonction(m), f(m)))
+        points.append((m, f(m), fp(m)))
         return points
 
     fonction = lambda x: x**2
     fonctionDeriv = lambda x: 2*x
 
-    plt.plot(dichotomie(fonctionDeriv, -2, 3, 1E-3))
+    plt.plot(dichotomie(fonction, fonctionDeriv, -2, 3, 1E-3))
     plt.xlabel('x')
     plt.ylabel('Valeur')
     plt.title('Valeurs de f et f\' associées')
     plt.legend()
     plt.savefig("ex1.svg")
     plt.show()
-
-    print(dichotomie(fonctionDeriv, -2, 3, 1E-3))
 
 # 2 - Méthode du gradient
 
@@ -125,9 +138,9 @@ def Ex2() :
     while True:
         choix_fonc = input("\nNumero de la fonction (1, 2, 3 ou sortie): ")
         if choix_fonc == '1':
-            traceEx2(fonc1, gradFonc1, gradient_pas_fixe, x0=[3,3], p=0.01, linespacex=[-3, 3], linspacey=[-3, 3])
+            traceEx2(fonc1, gradFonc1, gradient_pas_fixe, x0=[3,3], p=0.01, e=1, linespacex=[-3, 3], linspacey=[-3, 3])
         elif choix_fonc == '2':
-            traceEx2(fonc2, gradFonc2, gradient_pas_fixe, x0=[3,3], p=0.01, linespacex=[-3, 3], linspacey=[-3, 3])
+            traceEx2(fonc2, gradFonc2, gradient_pas_fixe, x0=[3,3], p=0.01, e=1, linespacex=[-3, 3], linspacey=[-3, 3])
         elif choix_fonc == '3':
             traceEx2(fonc3, gradFonc3, gradient_pas_fixe, x0=[0,0], p=0.1, e=1E-3, linespacex=[1, 6], linspacey=[1, 6])
         else:
